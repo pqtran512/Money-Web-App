@@ -1,0 +1,111 @@
+import React, { Component } from "react";
+import { Link } from 'react-router-dom';
+
+// Style
+import 'bootstrap/dist/css/bootstrap.css';
+  
+export default class Login extends Component
+{
+    constructor(props)
+    {
+        super(props)
+        this.state = { username: "", password: "" };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(e)
+    {
+        e.preventDefault();
+        const { username, password } = this.state;
+
+        // * Fill the form
+        if (username === "" || password === "")
+        {
+            alert("Please fill the form.");
+            return;
+        }
+
+        // * Fetch
+        fetch("http://localhost:3005/login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })    // Send username & password to BE
+        })
+            .then(response => response.json())
+            .then(data =>
+            {
+                // Display message
+                if (data.message === "SUCCESS")
+                {
+                    window.localStorage.setItem("username", username);
+                    window.localStorage.setItem("userID", data.user['_id']);
+                    // TODO redirect
+                    window.location.href = "../transaction";
+                }
+                else if (data.message === "NOT REGISTERED")
+                {
+                    alert("You have not registered. Redirecting to register page...");
+                    window.location.href = "./register";
+                }
+                else if (data.message === "WRONG PASSWORD")
+                {
+                    alert("Wrong password. Please try again.");
+                }
+            });
+    }
+
+    render()
+    {
+        return (
+            <div
+                className="row"
+                style={{ backgroundImage: "url(bg-login.jpeg)", backgroundSize: `100% 100%`}}
+            >
+                {/* Image */}
+                <div className="col-md-6 d-none d-sm-block p-0">
+                    <img src="login.png" alt="login" className="w-100" />
+                </div>
+
+                {/* Login form */}
+                <form
+                    onSubmit={this.handleSubmit}
+                    className="col-md-6 col-sm-12 px-5 m-auto text-start"
+                >
+                    <h1 className="h2 text-light mb-4">LOGIN</h1>
+                    
+                    <div class="form-outline mb-4 w-100">
+                        <input
+                            type="text"
+                            className="form-control form-control-lg"
+                            placeholder="Enter username ..."
+                            onChange={(e) => this.setState({ username: e.target.value })}
+                        />
+                    </div>
+
+                    <div class="form-outline mb-3 w-100">
+                        <input
+                            type="password"
+                            className="form-control form-control-lg"
+                            placeholder="Enter password ..."
+                            onChange={(e) => this.setState({ password: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="row">
+                        <p className="text-light" style={{width: '225px', fontSize: '19px'}}>Don't have an account?</p>
+                        <Link to='../register' className="cusLink text-info" style={{width: '100px', fontSize: '19px'}}>Register</Link>
+                    </div>
+
+                    <div className="my-3 text-center">
+                        <button
+                            type="submit"
+                            className="btn text-dark px-3 btn-warning btn-lg"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        )
+    }
+}
