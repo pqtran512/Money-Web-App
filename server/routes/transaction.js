@@ -14,6 +14,7 @@ transactionRoutes.get('/balance/:user_ID', function (req, res) {
 
 transactionRoutes.get('/all-transactions/:user_ID', (req, res) => {
     const { user_ID } = req.params;
+    console.log(Transaction.find({ user_ID }))
     Transaction.find({ user_ID })
         .populate('category_ID')
         .select('-user_ID')

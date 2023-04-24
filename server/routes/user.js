@@ -1,6 +1,7 @@
 const express = require("express");
 const userRoutes = express.Router();
 const User = require("../models/user");
+const Transaction = require("../models/transaction")
 
 userRoutes.post("/login", (req, res) => {
     console.log("login: ", req.body)

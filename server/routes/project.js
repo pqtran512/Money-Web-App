@@ -5,7 +5,7 @@ const User_be_in_project = require("../models/user_be_in_project")
 const User = require("../models/user")
 
 
-projectRoutes.route('/all-projects/:username').get((req, res) => {
+projectRoutes.route('/all-projects/:userID').get((req, res) => {
     const { username } = req.params;
     User.aggregate([
         {
@@ -17,7 +17,7 @@ projectRoutes.route('/all-projects/:username').get((req, res) => {
             }
         },
         {
-            $match: { username: username }
+            $match: { user_ID: username }
         }
     ]).exec(function (err, users) {
         if (err) return res.send(err);
