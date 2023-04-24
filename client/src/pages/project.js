@@ -11,8 +11,7 @@ import ProjectForm from '../Components/project-form';
 import ProjectAddCont from '../Components/project-add-cont';
 import ProjectAddMem from '../Components/project-add-mem';
 
-export default class Project extends Component
-{
+export default class Project extends Component {
     constructor(props)
     {
         super(props);
@@ -22,16 +21,16 @@ export default class Project extends Component
     }
 
     // * Get all project
-    componentDidMount()
-    {
-        // const username = window.localStorage.getItem('userID');
-
+    componentDidMount() {
+        const userID = window.localStorage.getItem('userID');
+        //console.log(username)
         // TODO Change to username, uncomment the above line
-        fetch('http://localhost:3005/all-projects/example')
+
+        fetch('http://localhost:3005/all-projects/' + userID)
         .then((response) => response.json())
         .then((json) =>
         {
-            json = json.map(o => ({...o, members: []}))
+            json = [json].map(o => ({...o, members: []}))
             this.setState({
                 projData: json
             });
@@ -55,7 +54,7 @@ export default class Project extends Component
         e.preventDefault();
 
         const { project_ID, money } = this.state;
-        const user_ID = "63b039df07258122b58d3b2a";
+        const username = window.localStorage.getItem('username');
     }
 
     openFormTrans = (event) =>
@@ -97,51 +96,26 @@ export default class Project extends Component
         document.querySelector('.overlay').classList.toggle('blur');
     };
     
-    clickLastMonthTab = (event) =>
-    {
-        document.querySelector('.tab-last-month').classList.toggle('hidden');
-        document.querySelector('.tab-this-month').classList.add('hidden');
-        document.querySelector('.tab-future').classList.add('hidden');
-        console.log('Click last month tab');
-    };
-
-    clickThisMonthTab = (event) =>
-    {
-        document.querySelector('.tab-this-month').classList.toggle('hidden');
-        document.querySelector('.tab-last-month').classList.add('hidden');
-        document.querySelector('.tab-future').classList.add('hidden');
-        console.log('Click this month tab');
-    };
-
-    clickFutureTab = (event) =>
-    {
-        document.querySelector('.tab-future').classList.toggle('hidden');
-        document.querySelector('.tab-last-month').classList.add('hidden');
-        document.querySelector('.tab-this-month').classList.add('hidden');
-        console.log('Click future tab');
-    };
-    
-    render()
-    {
+    render() {
         const { projData } = this.state;
-
+        console.log(projData)
+        var i = 0;
         return (
             <>
                 <div className="page-container">
                     <SideBar />
                     <NavBar />
-                    <div className="box-project">
-                    {
+                    <div className="box-project"> {
                             projData.map((proj, index) => (
                                 <div className="project" key={"project-" + index}>
                                     <div className="project-title">
                                         <div className="project-name">
-                                            <p className='text-uppercase'>{proj.project_name}</p>
+                                            <p className='text-uppercase'>{proj[0].project_name}</p>
                                         </div>
 
                                         <div className="project-target">
                                             <p>
-                                                Target: <span className="project-target-amount">{proj.target.toLocaleString('en-US')} ₫</span>
+                                                Target: <span className="project-target-amount">{proj[0].target} ₫</span>
                                             </p>
                                         </div>
                                     </div>
@@ -150,13 +124,13 @@ export default class Project extends Component
                                         <div className="header">
                                             <div className="current">
                                                 <p className='text-start pt-3'>
-                                                    Current total amount: <span className={"current-amount " + (proj.reality_money < proj.target ? "text-danger" : "text-success")}>{proj.reality_money.toLocaleString('en-US')} ₫</span>
+                                                    Current total amount: <span className={"current-amount " + (proj[0].reality_money < proj[0].target ? "text-danger" : "text-success")}>{proj[0].reality_money} ₫</span>
                                                 </p>
                                             </div>
 
                                             {/* TODO get project ID */}
                                             <div 
-                                                value={proj._id}
+                                                value={proj[0]._id}
                                                 className="icon icon-add-cont mt-2" 
                                                 onClick={this.openFormCont}
                                             >
@@ -171,7 +145,8 @@ export default class Project extends Component
                                         {/* * Members */}
                                         <div className="member-contribution">
                                             {
-                                                proj.members.map((mem, idx) => (
+                                                [proj.members].map((mem, idx) => (
+                                                    console.log(mem),
                                                     <div className="contribution-details">
                                                         <p className="username">{mem.username}</p> {/* data */}
                                                         <p className="privilege">{mem.privilege}</p> {/* data */}
@@ -181,6 +156,56 @@ export default class Project extends Component
                                             }
                                         </div>
                                     </div>
+                                <div className="project" key={"project-" + index}>
+                                    <div className="project-title">
+                                        <div className="project-name">
+                                            <p className='text-uppercase'>{proj[1].project_name}</p>
+                                        </div>
+
+                                        <div className="project-target">
+                                            <p>
+                                                Target: <span className="project-target-amount">{proj[1].target} ₫</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="project-detail">
+                                        <div className="header">
+                                            <div className="current">
+                                                <p className='text-start pt-3'>
+                                                    Current total amount: <span className={"current-amount " + (proj[1].reality_money < proj[1].target ? "text-danger" : "text-success")}>{proj[1].reality_money} ₫</span>
+                                                </p>
+                                            </div>
+
+                                            {/* TODO get project ID */}
+                                            <div 
+                                                value={proj[1]._id}
+                                                className="icon icon-add-cont mt-2" 
+                                                onClick={this.openFormCont}
+                                            >
+                                                <img src="https://cdn-icons-png.flaticon.com/512/3634/3634526.png" alt='icon' />
+                                            </div>
+
+                                            <div className="btn" onClick={this.openFormMem}>
+                                                <button className="add-mem">+ MEMBER</button>
+                                            </div>
+                                        </div>
+
+                                        {/* * Members */}
+                                        <div className="member-contribution">
+                                            {
+                                                [proj.members].map((mem, idx) => (
+                                                    console.log(mem),
+                                                    <div className="contribution-details">
+                                                        <p className="username">{mem.username}</p> {/* data */}
+                                                        <p className="privilege">{mem.privilege}</p> {/* data */}
+                                                        <p className="amount">{mem.money?.toLocaleString('en-US')} ₫</p> {/* data */}
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                             ))
                         }

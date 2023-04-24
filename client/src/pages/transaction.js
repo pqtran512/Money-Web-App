@@ -9,16 +9,14 @@ import NavBar from '../Components/navbar-transaction';
 import SideBar from '../Components/sideBar';
 import SearchBar from '../Components/searchBar';
 
-export default class Transaction extends Component
-{
-	clickLastMonthTab() 
-	{
+export default class Transaction extends Component {
+	clickLastMonthTab() {
 		document.querySelector('.tab-last-month').classList.toggle('hidden');
 		document.querySelector('.tab-this-month').classList.add('hidden');
 		document.querySelector('.tab-future').classList.add('hidden');
-		console.log('Click last month tab');
-		
-		fetch('http://localhost:3005/all-transactions/63b039df07258122b58d3b2a')
+
+		const link = 'http://localhost:3005/all-transactions/' + window.localStorage.getItem('userID');
+		fetch(link)
 			.then((response) => response.json())
 			// .then((data) => console.log(data))
 			.then((json) =>
@@ -33,14 +31,13 @@ export default class Transaction extends Component
 			})
 	};
 
-	clickThisMonthTab()
-	{
+	clickThisMonthTab() {
 		document.querySelector('.tab-this-month').classList.toggle('hidden');
 		document.querySelector('.tab-last-month').classList.add('hidden');
 		document.querySelector('.tab-future').classList.add('hidden');
-		console.log('Click this month tab');
 
-		fetch('http://localhost:3005/all-transactions/63b039df07258122b58d3b2a')
+		const link = 'http://localhost:3005/all-transactions/' + window.localStorage.getItem('userID');
+		fetch(link)
 			.then((response) => response.json())
 			// .then((data) => console.log(data))
 			.then((json) =>
@@ -54,14 +51,14 @@ export default class Transaction extends Component
 			})
 	};
 
-	clickFutureTab() 
-	{
+	clickFutureTab() {
 		document.querySelector('.tab-future').classList.toggle('hidden');
 		document.querySelector('.tab-last-month').classList.add('hidden');
 		document.querySelector('.tab-this-month').classList.add('hidden');
 		console.log('Click future tab');
 
-		fetch('http://localhost:3005/all-transactions/63b039df07258122b58d3b2a')
+		const link = 'http://localhost:3005/all-transactions/' + window.localStorage.getItem('userID');
+		fetch(link)
 			.then((response) => response.json())
 			// .then((data) => console.log(data))
 			.then((json) =>
@@ -76,8 +73,7 @@ export default class Transaction extends Component
 			})
 	};
 
-	constructor(props)
-	{
+	constructor(props) {
 		super(props);
 
 		this.state = {
@@ -89,14 +85,14 @@ export default class Transaction extends Component
 		this.clickLastMonthTab = this.clickLastMonthTab.bind(this);
 	}
 
-	componentDidMount()
-	{
+	componentDidMount() {
 		// const userID = window.localStorage.getItem('userID');
 
 		// TODO Change ID into userID, uncomment the above line
-		fetch('http://localhost:3005/all-transactions/63b039df07258122b58d3b2a')
+		const link = 'http://localhost:3005/all-transactions/' + window.localStorage.getItem('userID');
+		fetch(link)
 			.then((response) => response.json())
-			// .then((data) => console.log(data))
+			//.then((data) => console.log(data))
 			.then((json) =>
 			{
 				let transData = json.filter(tran => tran.date.slice(0, 7) === new Date().toISOString().slice(0, 7))
@@ -104,25 +100,23 @@ export default class Transaction extends Component
 					transData: transData
 				});
 			})
+
 	}
 
-	render()
-	{
+	render() {
 		const { transData } = this.state;
+		console.log(transData)
 
 		// * PREPARE DATA
 		const weekdayArr = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		const monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
+		const userID = window.localStorage.getItem('userID');
 		let sumIn = 0, sumOut = 0;
-		for (let i = 0; i < transData.length; i++)
-		{
+		for (let i = 0; i < transData.length; i++) {
 			// * Amount
 			let sumOfDate = 0;
-			for (let j = 0; j < transData[i].transactions.length; j++)
-			{
+			for (let j = 0; j < transData[i].transactions.length; j++) {
 				let amt = transData[i].transactions[j].amount;
-
 				sumOfDate += amt;
 
 				if (amt < 0)
